@@ -1,10 +1,9 @@
 import Sequelize from 'sequelize';
 import databaseConfig from '../config/database';
-
 import User from '../app/models/User';
 import Appointment from '../app/models/Appointment';
 
-const models = [User, Appointment]; // Adicionar models no loader
+const models = [User, Appointment];
 
 class Database {
     constructor() {

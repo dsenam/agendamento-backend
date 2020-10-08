@@ -7,11 +7,10 @@ class Appointment extends Model {
             {
                 date: Sequelize.DATE,
                 canceled_at: Sequelize.DATE,
-
             },
             { sequelize }
         );
-
+        return this;
     }
 
     static associate(models) {
