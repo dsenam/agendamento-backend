@@ -1,4 +1,4 @@
-import { startOfHour, parseISO, isBefore, format, subMinutes } from 'date-fns';
+import { startOfHour, parseISO, isBefore, subMinutes } from 'date-fns';
 import Appointment from '../models/Appointment';
 
 class AppointmentController {
@@ -61,7 +61,7 @@ class AppointmentController {
         if (isBefore(dateWithSub, new Date())) {
             return res.status(401).json({
                 error:
-                    'Você só pode cancelar agendamento com 10 minutos de antecedência ',
+                    'Você só pode cancelar agendamento com até 10 minutos de antecedência ',
             });
         }
 
