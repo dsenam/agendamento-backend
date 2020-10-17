@@ -24,29 +24,24 @@ class AppointmentController {
             return res.status(400).json({ error: 'Data vencida' });
         }
 
-        // Busca o agendamento no horário especificado
-        const appointment = await Appointment.findOne({
+        // Busca os agendamentos no horário enviado
+        const checkAppointments = await Appointment.findAll({
             where: {
                 date: hourStart,
                 canceled_at: null,
             },
         });
 
-        if (appointment == null) {
-            // Não existe, então cria o agendamento
-            const appointment = await Appointment.create({
-                user_id: req.userId,
-                date,
-                quantidade: 1,
-            });
-        } else if (appointment.quantidade < 6) {
-            // Já existe e é válido, então atualiza a quantidade no banco
-            appointment.quantidade += 1;
-            await appointment.save();
-        } else {
-            // Possui quantidade >= 6, então retorna o erro
-            return res.status(400).json({ error: 'Agendamento já preenchido' });
+        if (checkAppointments.length >= 6) {
+            return res
+                .status(400)
+                .json({ error: 'Todos os agendamentos foram preenchidos' });
         }
+
+        const appointment = await Appointment.create({
+            user_id: req.userId,
+            date,
+        });
 
         // Retorna o agendamento
         return res.json(appointment);
