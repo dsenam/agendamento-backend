@@ -50,6 +50,12 @@ class AppointmentController {
     async delete(req, res) {
         const appointment = await Appointment.findByPk(req.params.id);
 
+        if (appointment.user_id !== req.userId) {
+            return res.status(401).json({
+                error: 'Somente o dono do agendamento pode cancelar',
+            });
+        }
+
         const dateWithSub = subMinutes(appointment.date, 10);
 
         if (isBefore(dateWithSub, new Date())) {
@@ -60,7 +66,6 @@ class AppointmentController {
         }
 
         appointment.canceled_at = new Date();
-        appointment.quantidade -= 1;
         await appointment.save();
 
         return res.json(appointment);
