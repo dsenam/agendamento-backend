@@ -2,6 +2,18 @@ import { startOfHour, parseISO, isBefore } from 'date-fns';
 import Appointment from '../models/Appointment';
 
 class AppointmentController {
+    async index(req, res) {
+        // listar todos os agendamentos *(criar regra para visualizar apenas dados de hoje)
+        const appointments = await Appointment.findAll({
+            where: {
+                canceled_at: null,
+            },
+            order: ['date'],
+        });
+
+        return res.json(appointments);
+    }
+
     async store(req, res) {
         const { date } = req.body;
 
