@@ -7,7 +7,6 @@ class User extends Model {
             {
                 login: {
                     type: Sequelize.STRING,
-                    unique: true,
                 },
                 password_hash: Sequelize.STRING,
                 password: Sequelize.VIRTUAL,

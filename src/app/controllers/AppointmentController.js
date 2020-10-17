@@ -16,7 +16,7 @@ class AppointmentController {
     }
 
     async store(req, res) {
-        const { date } = req.body;
+        const { date, place } = req.body;
 
         const hourStart = startOfHour(parseISO(date));
 
@@ -25,27 +25,52 @@ class AppointmentController {
             return res.status(400).json({ error: 'Data vencida' });
         }
 
-        // Busca os agendamentos no horário enviado
-        const checkAppointments = await Appointment.findAll({
-            where: {
-                date: hourStart,
-                canceled_at: null,
-            },
-        });
+        if (place === 'academia') {
+            // Checando todos os apontamentos com data/lugar e se está cancelado
+            const checkAppointments = await Appointment.findAll({
+                where: {
+                    date: hourStart,
+                    canceled_at: null,
+                    place,
+                },
+            });
 
-        if (checkAppointments.length >= 6) {
-            return res
-                .status(400)
-                .json({ error: 'Todos os agendamentos foram preenchidos' });
+            if (checkAppointments.length >= 6) {
+                return res
+                    .status(400)
+                    .json({ error: 'Todos os agendamentos foram preenchidos' });
+            }
+
+            const appointment = await Appointment.create({
+                user_id: req.userId,
+                date,
+                place,
+            });
+            return res.json(appointment);
         }
+        if (place === 'piscina') {
+            // Checando todos os apontamentos com data/lugar e se está cancelado
+            const checkAppointments = await Appointment.findAll({
+                where: {
+                    date: hourStart,
+                    canceled_at: null,
+                    place,
+                },
+            });
 
-        const appointment = await Appointment.create({
-            user_id: req.userId,
-            date,
-        });
+            if (checkAppointments.length >= 15) {
+                return res
+                    .status(400)
+                    .json({ error: 'Todos os agendamentos foram preenchidos' });
+            }
 
-        // Retorna o agendamento
-        return res.json(appointment);
+            const appointment = await Appointment.create({
+                user_id: req.userId,
+                date,
+                place,
+            });
+            return res.json(appointment);
+        }
     }
 
     async delete(req, res) {
@@ -62,7 +87,7 @@ class AppointmentController {
         if (isBefore(dateWithSub, new Date())) {
             return res.status(401).json({
                 error:
-                    'Você só pode cancelar agendamento com até 10 minutos de antecedência ',
+                    'Você só pode cancelar o agendamento com até 10 minutos de antecedência ',
             });
         }
 
