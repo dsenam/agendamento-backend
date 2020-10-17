@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import Sequelize, { Model } from 'sequelize';
 import bcrypt, { hash } from 'bcryptjs';
 
@@ -8,10 +7,10 @@ class User extends Model {
             {
                 login: {
                     type: Sequelize.STRING,
-                    unique: true
+                    unique: true,
                 },
                 password_hash: Sequelize.STRING,
-                password: Sequelize.VIRTUAL
+                password: Sequelize.VIRTUAL,
             },
             { sequelize }
         );
@@ -28,8 +27,6 @@ class User extends Model {
     checkPassword(password) {
         return bcrypt.compare(password, this.password_hash);
     }
-
-    }
-
+}
 
 export default User;

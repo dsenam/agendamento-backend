@@ -3,9 +3,10 @@ import Appointment from '../models/Appointment';
 
 class AppointmentController {
     async index(req, res) {
-        // listar todos os agendamentos *(criar regra para visualizar apenas dados de hoje)
+        // listar todos os agendamentos do usuário
         const appointments = await Appointment.findAll({
             where: {
+                user_id: req.userId,
                 canceled_at: null,
             },
             order: ['date'],
