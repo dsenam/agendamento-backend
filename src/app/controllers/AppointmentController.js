@@ -1,4 +1,4 @@
-import { startOfHour, parseISO, isBefore } from 'date-fns';
+import { startOfHour, parseISO, isBefore, format, subMinutes } from 'date-fns';
 import Appointment from '../models/Appointment';
 
 class AppointmentController {
@@ -49,6 +49,25 @@ class AppointmentController {
         }
 
         // Retorna o agendamento
+        return res.json(appointment);
+    }
+
+    async delete(req, res) {
+        const appointment = await Appointment.findByPk(req.params.id);
+
+        const dateWithSub = subMinutes(appointment.date, 10);
+
+        if (isBefore(dateWithSub, new Date())) {
+            return res.status(401).json({
+                error:
+                    'Você só pode cancelar agendamento com 10 minutos de antecedência ',
+            });
+        }
+
+        appointment.canceled_at = new Date();
+        appointment.quantidade -= 1;
+        await appointment.save();
+
         return res.json(appointment);
     }
 }
